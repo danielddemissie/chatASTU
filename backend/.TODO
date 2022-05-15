@@ -1,0 +1,8 @@
+// :Note socket.io support  {
+//     json and binary data
+// }
+
+//brodercasting sending to only some sockets
+io.on("connection", (socket) => {
+  socket.broadcast.emit("hi");
+});
