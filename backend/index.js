@@ -4,10 +4,9 @@ require('dotenv').config();
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-const { userRoutes, chatRoutes } = require('./routes');
+const { userRoutes, chatRoutes, roomRoutes } = require('./routes');
 const connectToDB = require('./db.config');
 const mongoose = require('mongoose');
-const moment = require('moment');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,6 +22,7 @@ app.use(express.json());
 
 app.use('/api', userRoutes);
 app.use('/api', chatRoutes);
+app.use('/api', roomRoutes);
 
 io.on('connection', (socket) => {
   console.log('a user connected');

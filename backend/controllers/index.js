@@ -1,6 +1,6 @@
 //controllers
 const { User, Room, Chat } = require('../models');
-const { sendData, consoleError } = require('../utils');
+const { sendData, consoleError, userExist } = require('../utils');
 
 module.exports = {
   addUser: async (req, res) => {
@@ -100,14 +100,14 @@ module.exports = {
     try {
       const { _id } = req.params;
       //find the user
-      const chatOwner = await User.findOne({
+      const user = await User.findOne({
         _id,
       });
-      if (chatOwner) {
+      if (user) {
         const newchat = await new Chat({
           ...req.body,
-          user: _id,
-          room: chatOwner.currentroom,
+          userId: _id,
+          roomId: user.currentroom,
         });
         sendData(res, 'chat added', newchat);
       } else {
@@ -119,12 +119,70 @@ module.exports = {
     }
   },
 
+  joinRoom: async (req, res) => {
+    try {
+      const { _id } = req.params;
+      const { roomId } = req.body;
+
+      const user = await User.findOne({
+        _id,
+      });
+
+      const room = await Room.findOne({
+        roomId,
+      });
+      if (user && room) {
+        room.users.push(user._id);
+        await room.save();
+        sendData(res, `${user.username} joined ${room.name}`, room);
+      }
+    } catch (error) {
+      consoleError(error.message);
+      sendData(res, error.message, null);
+    }
+  },
+
+  leaveRoom: async (req, res) => {
+    try {
+      const { _id } = req.params;
+      const { roomId } = req.body;
+
+      const user = await User.findOne({
+        _id,
+      });
+
+      const room = await Room.findOne({
+        roomId,
+      });
+      if (user && room) {
+        room.users.filter((user) => user !== _id);
+        await room.save();
+        sendData(res, `${user.username} joined ${room.name}`, room);
+      }
+    } catch (error) {
+      consoleError(error.message);
+      sendData(res, error.message, null);
+    }
+  },
+
   addRoom: async (req, res) => {
     try {
-      const newRoom = await new Room({
-        ...req.body,
+      const { _id } = req.params;
+      //find the user
+      const user = await User.findOne({
+        _id,
       });
-      sendData(res, 'room created', newRoom);
+      if (user) {
+        const newRoom = await new Room({
+          ...req.body,
+          owner: _id,
+        });
+        newRoom.users.push(_id);
+        await newRoom.save();
+        sendData(res, 'room created', newRoom);
+      } else {
+        sendData(res, 'user not found', null);
+      }
     } catch (error) {
       consoleError(error);
       sendData(res, error.message, null);

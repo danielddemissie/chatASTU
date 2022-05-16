@@ -7,10 +7,10 @@ const chatSchema = new Schema(
       type: String,
       required: [true, 'chat is required.'],
     },
-    user: {
+    userId: {
       type: Types.ObjectId,
     },
-    room: {
+    roomId: {
       type: Types.ObjectId,
     },
   },
