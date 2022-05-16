@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import { ClassNames } from "@emotion/react";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./View/HomePage";
+import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import LoginModal from "./Components/LoginModal";
+import UserPage from "./View/UserPage";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<>
+			<Routes>
+				<Route path="/" exact element={<HomePage />} />
+				<Route path="/userpage" exact element={<UserPage />} />
+			</Routes>
+		</>
+	);
 }
 
 export default App;
