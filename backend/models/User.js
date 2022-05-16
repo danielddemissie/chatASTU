@@ -13,7 +13,10 @@ const userSchema = new Schema(
       required: [true, 'password is required'],
       minlength: [4, 'password should be atlease 4 character long.'],
     },
-    room: [
+    currentroom: {
+      type: Types.ObjectId,
+    },
+    rooms: [
       {
         type: Types.ObjectId,
       },
