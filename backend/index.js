@@ -4,8 +4,10 @@ require('dotenv').config();
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-const conneToDB = require('./db.config');
-const { userRoutes } = require('./routes');
+const { userRoutes, chatRoutes } = require('./routes');
+const connectToDB = require('./db.config');
+const mongoose = require('mongoose');
+const moment = require('moment');
 
 const app = express();
 const server = http.createServer(app);
@@ -19,11 +21,9 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/index.html'));
-});
-
 app.use('/api', userRoutes);
+app.use('/api', chatRoutes);
+
 io.on('connection', (socket) => {
   console.log('a user connected');
 
@@ -42,8 +42,35 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  conneToDB();
+  connectToDB();
   console.log(`app running at port ${PORT}`);
 });
 
-//address in use
+const connection = mongoose.connection;
+
+connection.once('open', () => {
+  console.log('start stream');
+  const chatStream = connection.collection('chats').watch();
+  chatStream.on('change', (change) => {
+    switch (change.operationType) {
+      case 'insert':
+        let newChat = {
+          _id: change.fullDocument._id,
+          chat: change.fullDocument.chat,
+          user: change.fullDocument.user,
+        };
+        return io.emit('newChat', newChat);
+      case 'update':
+        let editChat = {
+          _id: change.fullDocument._id,
+          chat: change.fullDocument.chat,
+          user: change.fullDocument.user,
+        };
+        return io.emit('editChat', editChat);
+      case 'delete':
+        return io.emit('deleteChat', change.documentKey._id);
+      default:
+        break;
+    }
+  });
+});
