@@ -7,6 +7,7 @@ module.exports = () => {
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      connectTimeoutMS: 5000,
     },
     (err) => {
       if (err) {
