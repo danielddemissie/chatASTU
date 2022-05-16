@@ -12,38 +12,27 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 4200;
 
-//create new io server with
-// your http server
+//create new io server
+//with http server
 const io = new Server(server);
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.get('/api/socket', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 app.use('/api', userRoutes);
 app.use('/api', chatRoutes);
 app.use('/api', roomRoutes);
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-
-  //reciving chat message event
-  socket.on('chat message', (msg) => {
-    console.log('Messge: ' + msg);
-    //sending to everyone including the writer;
-    io.emit('chat message', msg);
+// Run first when client connects
+io.of('/api/socket').on('connection', (socket) => {
+  console.log('user connected');
+  socket.on('disconnect', () => {
+    console.log('disconnected');
   });
-
-  //sending back the message
-  socket.on('disconnect', (data) => {
-    console.log('user disconnected');
-    console.log('diconnect data: ' + data);
-  });
-});
-
-server.listen(PORT, () => {
-  connectToDB();
-  console.log(`app running at port ${PORT}`);
 });
 
 const connection = mongoose.connection;
@@ -73,4 +62,10 @@ connection.once('open', () => {
         break;
     }
   });
+});
+
+//run server
+server.listen(PORT, () => {
+  connectToDB();
+  console.log(`app running at port ${PORT}`);
 });
