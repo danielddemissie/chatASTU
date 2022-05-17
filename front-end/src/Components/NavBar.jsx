@@ -1,7 +1,6 @@
 import * as React from 'react';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
-
 export default function NavigationBar() {
   return (
     <>
