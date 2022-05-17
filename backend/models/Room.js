@@ -8,6 +8,9 @@ const roomSchema = new Schema(
       required: [true, 'room name is required.'],
       minlength: [3, 'room name should be atlease 3 character long.'],
     },
+    owner: {
+      type: Types.ObjectId,
+    },
     users: [
       {
         type: Types.ObjectId,
