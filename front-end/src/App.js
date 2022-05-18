@@ -1,22 +1,17 @@
-import { ClassNames } from "@emotion/react";
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./View/HomePage";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import LoginModal from "./Components/LoginModal";
-import UserPage from "./View/UserPage";
-
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './View/HomePage';
+import UserPage from './View/UserPage';
+import 'semantic-ui-css/semantic.min.css';
 function App() {
-	return (
-		<>
-			<Routes>
-				<Route path="/" exact element={<HomePage />} />
-				<Route path="/userpage" exact element={<UserPage />} />
-			</Routes>
-		</>
-	);
+  return (
+    <div>
+      <Routes>
+        <Route path="/" exact element={<HomePage />} />
+        <Route path="/userpage" exact element={<UserPage />} />
+      </Routes>
+    </div>
+  );
 }
 
 export default App;
