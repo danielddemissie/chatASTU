@@ -72,7 +72,7 @@
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         if (input.value) {
-          socket.emit('chat message', input.value);
+          socket.emit('addRoom', input.value);
           input.value = '';
         }
       });

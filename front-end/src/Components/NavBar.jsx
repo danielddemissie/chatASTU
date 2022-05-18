@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import * as React from 'react';
 
 // export default function NavigationBar() {
@@ -16,6 +17,27 @@
 //           >
 //             <i className="fas fa-bars"></i>
 //           </button>
+=======
+import * as React from 'react';
+import LoginModal from './LoginModal';
+import SignupModal from './SignupModal';
+export default function NavigationBar() {
+  return (
+    <>
+      <nav className="navbar navbar-expand-lg bg-dark">
+        <div className="container-fluid">
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-mdb-toggle="collapse"
+            data-mdb-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <i className="fas fa-bars"></i>
+          </button>
+>>>>>>> 25d4843801c2271fe9b3b02a465d0005ca7247cf
 
 //           <div className="collapse navbar-collapse" id="navbarSupportedContent">
 //             <a className="navbar-brand mt-2 mt-lg-0" href="/">
