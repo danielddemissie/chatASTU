@@ -6,11 +6,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 
 ReactDOM.render(
-  <React.Fragment>
+  <React.StrictMode>
     <Router>
       <App />
     </Router>
-  </React.Fragment>,
+  </React.StrictMode>,
   document.getElementById('root')
 );
 
