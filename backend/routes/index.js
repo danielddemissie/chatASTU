@@ -16,7 +16,7 @@ const userRoutes = route
   .post('/user/add', addUser)
   .get('/user/all', getAllUsers)
   .get('/user/single', getUser)
-  .get('/user/signin', loginUser)
+  .post('/user/signin', loginUser)
   .put('/user/edit/:_id', editUser)
   .delete('/user/delete/:_id', deleteUser);
 const chatRoutes = route.post('/chat/add/:_id', addChat);

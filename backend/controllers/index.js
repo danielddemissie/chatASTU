@@ -30,18 +30,18 @@ module.exports = {
   },
 
   loginUser: async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({
-      username,
-    });
-    if (user) {
+    try {
+      const { username, password } = req.body;
+      const user = await User.findOne({
+        username,
+      });
       if (user.password === password) {
-        sendData(res, 'User signin successfully.', user);
+        return sendData(res, 'User signin successfully.', user);
       } else {
-        sendData(res, 'Incorrect username or password', null);
+        return sendData(res, 'Incorrect username or password', null);
       }
-    } else {
-      sendData(res, 'Invalid user', null);
+    } catch (error) {
+      return sendData(res, error.message, null);
     }
   },
   getAllUsers: async (req, res) => {
