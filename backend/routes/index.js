@@ -6,7 +6,10 @@ const {
   addChat,
   loginUser,
   getUser,
+  getRoom,
   addRoom,
+  getAllRooms,
+  joinRoom,
 } = require('../controllers');
 const { Router } = require('express');
 
@@ -20,5 +23,9 @@ const userRoutes = route
   .put('/user/edit/:_id', editUser)
   .delete('/user/delete/:_id', deleteUser);
 const chatRoutes = route.post('/chat/add/:_id', addChat);
-const roomRoutes = route.post('/room/add/:_id', addRoom);
+const roomRoutes = route
+  .post('/room/add/:_id', addRoom)
+  .get('/room/all/:_id', getAllRooms)
+  .post('/room/single/:_id', getRoom)
+  .post('/room/joinroom/:_id', joinRoom);
 module.exports = { userRoutes, chatRoutes, roomRoutes };
