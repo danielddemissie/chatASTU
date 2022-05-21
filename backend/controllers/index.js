@@ -104,15 +104,16 @@ module.exports = {
   addChat: async (req, res) => {
     try {
       const { _id } = req.params;
+      const { roomId, chat } = req.body;
       //find the user
       const user = await User.findOne({
         _id,
       });
       if (user) {
         const newchat = await new Chat({
-          ...req.body,
+          chat,
           userId: _id,
-          roomId: user.currentroom,
+          roomId,
         });
         sendData(res, 'chat added', newchat);
       } else {

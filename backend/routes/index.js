@@ -28,4 +28,5 @@ const roomRoutes = route
   .get('/room/all/:_id', getAllRooms)
   .post('/room/single/:_id', getRoom)
   .post('/room/joinroom/:_id', joinRoom);
+
 module.exports = { userRoutes, chatRoutes, roomRoutes };

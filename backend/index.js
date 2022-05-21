@@ -5,7 +5,7 @@ const path = require('path');
 const http = require('http');
 const { userRoutes, chatRoutes, roomRoutes } = require('./routes');
 const connectToDB = require('./db.config');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const app = express();
 const server = http.createServer(app);
 
@@ -37,36 +37,45 @@ io.of('/api/socket').on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('disconnected');
   });
-});
 
-const connection = mongoose.connection;
+  socket.on('joinRoom', ({ user, room }, cb) => {
+    if (user && room) {
+      socket.join(room);
+      socket.emit('welcomeMessage', `${user} joined ${room} room.`);
+    } else {
+      cb();
+    }
+  });
 
-connection.once('open', () => {
-  console.log('start stream');
-  const chatStream = connection.collection('chats').watch();
-  chatStream.on('change', (change) => {
-    switch (change.operationType) {
-      case 'insert':
-        let newChat = {
-          _id: change.fullDocument._id,
-          chat: change.fullDocument.chat,
-          user: change.fullDocument.user,
-        };
-        return io.emit('newChat', newChat);
-      case 'update':
-        let editChat = {
-          _id: change.fullDocument._id,
-          chat: change.fullDocument.chat,
-          user: change.fullDocument.user,
-        };
-        return io.emit('editChat', editChat);
-      case 'delete':
-        return io.emit('deleteChat', change.documentKey._id);
-      default:
-        break;
+  socket.on('message', ({ user, room, msg }, cb) => {
+    if (user && room) {
+      console.log(msg);
+      socket.emit('message', msg);
+    } else {
+      cb();
     }
   });
 });
+
+// const connection = mongoose.connection;
+
+// connection.once('open', () => {
+//   console.log('start stream');
+//   const chatStream = connection.collection('chats').watch();
+//   chatStream.on('change', (change) => {
+//     switch (change.operationType) {
+//       case 'insert':
+//         let newChat = {
+//           _id: change.fullDocument._id,
+//           chat: change.fullDocument.chat,
+//           user: change.fullDocument.user,
+//         };
+//         return io.to('public').emit('message', newChat);
+//       default:
+//         break;
+//     }
+//   });
+// });
 
 //run server
 server.listen(PORT, () => {

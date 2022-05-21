@@ -6,9 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAllRooms, joinRooms } from '../api';
-import io from 'socket.io-client';
-import { cleanUpSocket, url } from '../utils';
-const URL = `${url}/socket`;
+import { cancelAxios } from '../utils';
 
 export default function JoinRoom() {
   const [rooms, setRooms] = useState([]);
@@ -17,15 +15,12 @@ export default function JoinRoom() {
   const navigateTo = useNavigate();
 
   useEffect(() => {
-    const socket = io(URL);
-    console.log('user connected');
     (async () => {
       const res = await getAllRooms(loggedUser._id);
-      console.log(res.data);
       setRooms(() => res.data.Data);
     })();
     return () => {
-      cleanUpSocket(socket);
+      cancelAxios();
     };
   }, [loggedUser]);
 
@@ -35,8 +30,7 @@ export default function JoinRoom() {
   };
 
   const joinRoomHandler = async (roomId) => {
-    const res = await joinRooms(loggedUser._id, roomId);
-    console.log(res);
+    await joinRooms(loggedUser._id, roomId);
     navigateTo('/room', {
       state: {
         room: roomId,

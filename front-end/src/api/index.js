@@ -32,6 +32,10 @@ export function joinRooms(_id, roomId) {
   return axiosClient.post('/room/joinroom/' + _id, { roomId });
 }
 
+export function addChat(_id, roomId, chat) {
+  return axiosClient.post('/chat/add/' + _id, { roomId, chat });
+}
+
 //TODO:
 //getUserCurrentRoom
 //getAllRoom and let user choose room
