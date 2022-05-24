@@ -1,10 +1,15 @@
 import React from 'react';
 import { Box } from '@mui/material/';
 
-export default function Chat({ username, text }) {
+export default function Chat({ text }) {
   return (
     <div>
-      <Box>
+      <Box
+        sx={{
+          marginTop: 2,
+          marginLeft: 3,
+        }}
+      >
         <span
           style={{
             color: 'teal',
@@ -12,7 +17,7 @@ export default function Chat({ username, text }) {
             marginRight: 10,
           }}
         >
-          {username}
+          {text.split(' ')[0]}
         </span>
         <span>{text}</span>
       </Box>

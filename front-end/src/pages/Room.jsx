@@ -86,7 +86,13 @@ export default function Room() {
         ) : (
           <p>no chats</p>
         )}
-        <form className="form" onSubmit={(e) => handlerSendMessage(e)}>
+        <form
+          className="form"
+          onSubmit={(e) => handlerSendMessage(e)}
+          style={{
+            marginLeft: 10,
+          }}
+        >
           <Input
             type="text"
             placeholder="Type a Message"
