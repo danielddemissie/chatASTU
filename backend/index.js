@@ -49,8 +49,8 @@ io.of('/api/socket').on('connection', (socket) => {
 
   socket.on('message', ({ user, room, msg }, cb) => {
     if (user && room) {
-      socket.in(room).emit('message', msg);
-      socket.emit('message', msg);
+      socket.in(room).emit('message', `${user} ${msg}`);
+      socket.emit('message', `${user} ${msg}`);
     } else {
       cb();
     }
