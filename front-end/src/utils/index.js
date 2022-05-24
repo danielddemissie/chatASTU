@@ -37,14 +37,13 @@ export function sendMessage(user, room, msg) {
 export function getMessage(cb) {
   if (!socket) return;
   socket.on('message', (msg) => {
-    console.log('getmessage');
     return cb(null, msg);
   });
 }
 
 export function onWelcomeMessage(cb) {
   if (!socket) return;
-  socket.on('welcomeMessage', (msg) => {
+  socket.once('welcomeMessage', (msg) => {
     return cb(null, msg);
   });
 }

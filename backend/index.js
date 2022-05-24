@@ -33,15 +33,15 @@ app.use('/api', roomRoutes);
 
 // Run first when client connects
 io.of('/api/socket').on('connection', (socket) => {
-  console.log('user connected');
-  socket.on('disconnect', () => {
-    console.log('disconnected');
+  console.log('user connected ' + socket.id);
+  socket.on('disconnect', (data) => {
+    console.log('disconnected ' + data);
   });
 
   socket.on('joinRoom', ({ user, room }, cb) => {
     if (user && room) {
       socket.join(room);
-      socket.emit('welcomeMessage', `${user} joined ${room} room.`);
+      socket.to(room).emit('welcomeMessage', `${user} joined ${room} room.`);
     } else {
       cb();
     }
@@ -49,7 +49,7 @@ io.of('/api/socket').on('connection', (socket) => {
 
   socket.on('message', ({ user, room, msg }, cb) => {
     if (user && room) {
-      console.log(msg);
+      socket.in(room).emit('message', msg);
       socket.emit('message', msg);
     } else {
       cb();

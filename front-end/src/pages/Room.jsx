@@ -1,6 +1,6 @@
 import React from 'react';
-import { addChat, getRoom } from '../api/index';
-import { useEffect, useState } from 'react';
+import { addChat, allChatinRoom, getRoom } from '../api/index';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import {
@@ -13,13 +13,20 @@ import {
 } from '../utils';
 import { Button, Input } from '@mui/material';
 import { SendOutlined } from '@mui/icons-material';
+import Chat from '../components/Chat';
 
 export default function Room() {
   const data = useLocation();
-  const roomId = data.state.room;
-  const user = data.state.user;
+
+  let roomId = useRef(data.state.roomId);
+  let user = useRef(data.state.user);
+
+  roomId = roomId.current;
+  user = user.current;
+
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState('');
+
   const [room, setRoom] = useState({
     name: '',
     users: [],
@@ -30,7 +37,7 @@ export default function Room() {
     onWelcomeMessage(async (error, msg) => {
       if (error) return;
       const res = await addChat(user._id, roomId, msg);
-      setChats((chats) => [res.data.Data, ...chats]);
+      setChats((chats) => [...chats, res.data.Data]);
     });
     getMessage(async (error, msg) => {
       if (error) return;
@@ -39,21 +46,22 @@ export default function Room() {
       setChats((chats) => [...chats, res.data.Data]);
     });
     return () => {
-      cleanUpSocket();
+      cancelAxios();
     };
-  }, [room, user, roomId]);
+  }, [room.name]);
 
   useEffect(() => {
-    getRoomapi();
+    (async () => {
+      const res = await getRoom(user._id, roomId);
+      const allchatsinroom = await allChatinRoom(roomId._id);
+      console.log(allchatsinroom.data);
+      setRoom({ ...res.data.Data });
+    })();
     return () => {
+      cleanUpSocket(user, roomId);
       cancelAxios();
     };
   }, []);
-
-  const getRoomapi = async () => {
-    const res = await getRoom(user._id, roomId);
-    setRoom({ ...res.data.Data });
-  };
 
   const onMessageChange = (e) => {
     setMessage(e.target.value);
@@ -66,13 +74,15 @@ export default function Room() {
     }
     setMessage('');
   };
-
   return (
     <div>
-      {room.name}
+      <h1>{user.username}</h1>
+      <h3>{room.name}</h3>
       <div>
         {chats.length > 0 ? (
-          chats.map((chat) => <p key={chat._id}>{chat.chat}</p>)
+          chats.map((chat) => (
+            <Chat text={chat.chat} username={chat.username} key={chat._id} />
+          ))
         ) : (
           <p>no chats</p>
         )}

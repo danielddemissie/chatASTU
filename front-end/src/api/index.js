@@ -16,24 +16,33 @@ export function getUser(_id) {
   return axiosClient.post('/user/single' + _id);
 }
 
-export function addRoom(room, _id) {
-  return axiosClient.post('/room/add/' + _id, { ...room });
+export function addRoom(roomName, _id) {
+  return axiosClient.post('/room/add/' + _id, { roomName });
 }
 
-export function getAllRooms(_id) {
+export function getAllRoomsOfUser(_id) {
   return axiosClient.get('/room/all/' + _id);
 }
-
+export function getAllRooms() {
+  return axiosClient.get('/room/all');
+}
 export function getRoom(_id, roomId) {
   return axiosClient.post('/room/single/' + _id, { roomId });
 }
 
-export function joinRooms(_id, roomId) {
-  return axiosClient.post('/room/joinroom/' + _id, { roomId });
+export function joinRooms(_id, roomName) {
+  return axiosClient.get('/room/joinroom/' + _id, {
+    params: {
+      name: roomName,
+    },
+  });
 }
 
 export function addChat(_id, roomId, chat) {
   return axiosClient.post('/chat/add/' + _id, { roomId, chat });
+}
+export function allChatinRoom(roomId) {
+  return axiosClient.get('/chat/all/' + roomId);
 }
 
 //TODO:
