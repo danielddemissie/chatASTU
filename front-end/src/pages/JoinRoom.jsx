@@ -13,6 +13,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAllRooms, getAllRoomsOfUser, joinRooms, addRoom } from '../api';
 import { cancelAxios } from '../utils';
+import { useCallback } from 'react';
 
 export default function JoinRoom() {
   const navigateTo = useNavigate();
@@ -46,12 +47,14 @@ export default function JoinRoom() {
 
   const joinRoomHandler = async (roomN) => {
     const res = await joinRooms(loggedUser._id, roomN);
-    navigateTo('/room', {
-      state: {
-        roomId: res.data.Data,
-        user: { ...loggedUser },
-      },
-    });
+    if (res.data.Data) {
+      navigateTo('/room', {
+        state: {
+          room: res.data.Data,
+          user: { ...loggedUser },
+        },
+      });
+    }
   };
 
   const toggleModal = () => {
@@ -61,10 +64,13 @@ export default function JoinRoom() {
   const onFormChange = (e) => {
     setrName(e.target.value);
   };
-
+  const addroomHandler = useCallback(async (rName) => {
+    const newRoom = await addRoom(rName, loggedUser._id);
+    setuserRooms((userrooms) => [...userrooms, newRoom.data.Data]);
+  }, []);
   const onFormSubmit = async (e) => {
     e.preventDefault();
-    await addRoom(rName, loggedUser._id);
+    addroomHandler(rName);
     setrName('');
     toggleModal();
   };

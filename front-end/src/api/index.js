@@ -13,7 +13,7 @@ export function getAllUsers() {
 }
 
 export function getUser(_id) {
-  return axiosClient.post('/user/single' + _id);
+  return axiosClient.get('/user/single/' + _id);
 }
 
 export function addRoom(roomName, _id) {
@@ -38,11 +38,19 @@ export function joinRooms(_id, roomName) {
   });
 }
 
-export function addChat(_id, roomId, chat) {
-  return axiosClient.post('/chat/add/' + _id, { roomId, chat });
+export function addChat(username, rname, text) {
+  return axiosClient.post(
+    '/chat/add/' + rname,
+    { text },
+    {
+      params: {
+        username,
+      },
+    }
+  );
 }
-export function allChatinRoom(roomId) {
-  return axiosClient.get('/chat/all/' + roomId);
+export function allChatinRoom(rname) {
+  return axiosClient.get(`/chat/all/${rname}`);
 }
 
 //TODO:

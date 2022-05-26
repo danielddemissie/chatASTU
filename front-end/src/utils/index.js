@@ -36,9 +36,9 @@ export function sendMessage(user, room, msg) {
 
 export function getMessage(cb) {
   if (!socket) return;
-  socket.on('message', (msg) => {
-    console.log(msg);
-    return cb(null, msg);
+  socket.on('message', (data) => {
+    console.log(data);
+    return cb(null, data);
   });
 }
 

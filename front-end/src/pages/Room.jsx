@@ -1,8 +1,6 @@
-import React from 'react';
-import { addChat, allChatinRoom, getRoom } from '../api/index';
+import { addChat } from '../api/index';
 import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-
 import {
   cancelAxios,
   cleanUpSocket,
@@ -18,47 +16,26 @@ import Chat from '../components/Chat';
 export default function Room() {
   const data = useLocation();
 
-  let roomId = useRef(data.state.roomId);
-  let user = useRef(data.state.user);
-
-  roomId = roomId.current;
-  user = user.current;
+  const room = useRef(data.state.room);
+  const user = useRef(data.state.user);
 
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState('');
 
-  const [room, setRoom] = useState({
-    name: '',
-    users: [],
-  });
-
   useEffect(() => {
-    connectToSocket(room.name, user.username);
+    connectToSocket(room.current.name, user.current.username);
     onWelcomeMessage(async (error, msg) => {
       if (error) return;
-      const res = await addChat(user._id, roomId, msg);
+      const res = await addChat(user.current.username, room.current.name, msg);
       setChats((chats) => [...chats, res.data.Data]);
     });
-    getMessage(async (error, msg) => {
+    getMessage(async (error, { msg, user }) => {
       if (error) return;
-      const res = await addChat(user._id, roomId, msg);
-      console.log(res.data);
+      const res = await addChat(user, room.current.name, msg);
       setChats((chats) => [...chats, res.data.Data]);
     });
     return () => {
-      cancelAxios();
-    };
-  }, [room.name]);
-
-  useEffect(() => {
-    (async () => {
-      const res = await getRoom(user._id, roomId);
-      const allchatsinroom = await allChatinRoom(roomId._id);
-      console.log(allchatsinroom.data);
-      setRoom({ ...res.data.Data });
-    })();
-    return () => {
-      cleanUpSocket(user, roomId);
+      cleanUpSocket();
       cancelAxios();
     };
   }, []);
@@ -69,19 +46,18 @@ export default function Room() {
 
   const handlerSendMessage = (e) => {
     e.preventDefault();
-    if (message) {
-      sendMessage(user.username, room.name, message);
-    }
+    message && sendMessage(user.current.username, room.current.name, message);
     setMessage('');
   };
+
   return (
     <div>
-      <h1>{user.username}</h1>
-      <h3>{room.name}</h3>
+      <h1>{user.current.username}</h1>
+      <h3>{room.current.name}</h3>
       <div>
         {chats.length > 0 ? (
           chats.map((chat) => (
-            <Chat text={chat.chat} username={chat.username} key={chat._id} />
+            <Chat msg={chat.text} username={chat.user} key={chat._id} />
           ))
         ) : (
           <p>no chats</p>
@@ -98,7 +74,6 @@ export default function Room() {
             placeholder="Type a Message"
             value={message}
             onChange={onMessageChange}
-            // onKeyPress={(e) => (e.key === 'Enter' ? sendMessage(e) : null)}
           />
           <Button type="submit" disabled={message === '' ? true : false}>
             <SendOutlined />

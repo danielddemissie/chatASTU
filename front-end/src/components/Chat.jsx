@@ -1,7 +1,6 @@
-import React from 'react';
 import { Box } from '@mui/material/';
 
-export default function Chat({ text }) {
+export default function Chat({ msg, username }) {
   return (
     <div>
       <Box
@@ -17,9 +16,9 @@ export default function Chat({ text }) {
             marginRight: 10,
           }}
         >
-          {text.split(' ')[0]}
+          {username}
         </span>
-        <span>{text}</span>
+        <span>{msg}</span>
       </Box>
     </div>
   );
