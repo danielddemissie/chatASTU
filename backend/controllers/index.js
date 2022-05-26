@@ -16,6 +16,8 @@ module.exports = {
       const user = await new User({
         ...req.body,
       });
+
+      //only admin
       if (username === 'admin') {
         await user.save();
         return sendData(res, 'User created successfully.', user);
@@ -117,36 +119,29 @@ module.exports = {
   },
   allChatinRoom: async (req, res) => {
     try {
-      const { roomId } = req.params;
-      const room = await Room.findOne({
-        _id: roomId,
-      });
+      //sorted chat in created at
+      const { rname } = req.params;
       const allChats = await Chat.find({
-        roomId,
+        rname,
       });
-      sendData(res, `all chats in${room.name}.`, allChats);
+      return sendData(res, `all chats in ${rname}.`, allChats);
     } catch (error) {
       sendData(res, error.message, null);
     }
   },
   addChat: async (req, res) => {
     try {
-      const { _id } = req.params;
-      const { roomId, chat } = req.body;
+      const { username } = req.query;
+      const { rname } = req.params;
+      const { text } = req.body;
       //find the user
-      const user = await User.findOne({
-        _id,
+      const newchat = await new Chat({
+        text,
+        user: username,
+        rname,
       });
-      if (user) {
-        const newchat = await new Chat({
-          chat,
-          userId: _id,
-          roomId,
-        });
-        sendData(res, 'chat added', newchat);
-      } else {
-        sendData(res, 'user not found', null);
-      }
+      await newchat.save();
+      sendData(res, 'chat added', newchat);
     } catch (error) {
       sendData(res, error.message, null);
     }

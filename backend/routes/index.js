@@ -21,13 +21,13 @@ const route = Router();
 const userRoutes = route
   .post('/user/add', addUser)
   .get('/user/all', getAllUsers)
-  .get('/user/single', getUser)
+  .get('/user/single/:_id', getUser)
   .post('/user/signin', loginUser)
   .put('/user/edit/:_id', editUser)
   .delete('/user/delete/:_id', deleteUser);
 const chatRoutes = route
-  .post('/chat/add/:_id', addChat)
-  .get('/chat/all/:roomId', allChatinRoom);
+  .post('/chat/add/:rname', addChat)
+  .get('/chat/all/:rname', allChatinRoom);
 const roomRoutes = route
   .post('/room/add/:_id', addRoom)
   .get('/room/all/:_id', getAllRoomsOfUser)

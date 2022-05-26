@@ -3,15 +3,15 @@ const { model, Schema, Types } = require('mongoose');
 
 const chatSchema = new Schema(
   {
-    chat: {
+    text: {
       type: String,
-      required: [true, 'chat is required.'],
+      required: [true, 'text is required.'],
     },
-    userId: {
-      type: Types.ObjectId,
+    user: {
+      type: String,
     },
-    roomId: {
-      type: Types.ObjectId,
+    rname: {
+      type: String,
     },
   },
   {

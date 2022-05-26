@@ -5,7 +5,7 @@ const path = require('path');
 const http = require('http');
 const { userRoutes, chatRoutes, roomRoutes } = require('./routes');
 const connectToDB = require('./db.config');
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const app = express();
 const server = http.createServer(app);
 
@@ -32,6 +32,9 @@ app.use('/api', chatRoutes);
 app.use('/api', roomRoutes);
 
 // Run first when client connects
+
+const connection = mongoose.connection;
+
 io.of('/api/socket').on('connection', (socket) => {
   console.log('user connected ' + socket.id);
   socket.on('disconnect', (data) => {
@@ -48,34 +51,40 @@ io.of('/api/socket').on('connection', (socket) => {
   });
 
   socket.on('message', ({ user, room, msg }, cb) => {
-    if (user && room) {
-      socket.in(room).emit('message', `${user} ${msg}`);
-      socket.emit('message', `${user} ${msg}`);
-    } else {
-      cb();
-    }
+    // connection.once('open', () => {
+    //   console.log('start stream');
+    //   const chatStream = connection.collection('chats').watch();
+    //   chatStream.on('change', (change) => {
+    //     switch (change.operationType) {
+    //       case 'insert':
+    //         let newChat = {
+    //           _id: change.fullDocument._id,
+    //           text: mg,
+    //           user: user,
+    //           rname: rname,
+    //         };
+    //         console.log(newChat);
+    //         return socket.to(room).emit('message', newChat);
+    //       default:
+    //         break;
+    //     }
+    //   });
+    // });
+    //for all the members
+    socket.to(room).emit('message', {
+      msg,
+      user,
+    });
+    //for the sender
+    // socket.emit('message', {
+    //   msg,
+    //   user,
+    // });
   });
 });
 
-// const connection = mongoose.connection;
-
-// connection.once('open', () => {
-//   console.log('start stream');
-//   const chatStream = connection.collection('chats').watch();
-//   chatStream.on('change', (change) => {
-//     switch (change.operationType) {
-//       case 'insert':
-//         let newChat = {
-//           _id: change.fullDocument._id,
-//           chat: change.fullDocument.chat,
-//           user: change.fullDocument.user,
-//         };
-//         return io.to('public').emit('message', newChat);
-//       default:
-//         break;
-//     }
-//   });
-// });
+//realtime change of mongodb
+//using change stream and replica set
 
 //run server
 server.listen(PORT, () => {
