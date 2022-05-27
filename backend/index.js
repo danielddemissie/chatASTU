@@ -32,41 +32,59 @@ app.use('/api', chatRoutes);
 app.use('/api', roomRoutes);
 
 // Run first when client connects
-io.of('/api/socket').on('connection', (socket) => {
-  console.log('user connected');
-  socket.on('disconnect', () => {
-    console.log('disconnected');
-  });
-});
 
 const connection = mongoose.connection;
 
-connection.once('open', () => {
-  console.log('start stream');
-  const chatStream = connection.collection('chats').watch();
-  chatStream.on('change', (change) => {
-    switch (change.operationType) {
-      case 'insert':
-        let newChat = {
-          _id: change.fullDocument._id,
-          chat: change.fullDocument.chat,
-          user: change.fullDocument.user,
-        };
-        return io.emit('newChat', newChat);
-      case 'update':
-        let editChat = {
-          _id: change.fullDocument._id,
-          chat: change.fullDocument.chat,
-          user: change.fullDocument.user,
-        };
-        return io.emit('editChat', editChat);
-      case 'delete':
-        return io.emit('deleteChat', change.documentKey._id);
-      default:
-        break;
+io.of('/api/socket').on('connection', (socket) => {
+  console.log('user connected ' + socket.id);
+  socket.on('disconnect', (data) => {
+    console.log('disconnected ' + data);
+  });
+
+  socket.on('joinRoom', ({ user, room }, cb) => {
+    if (user && room) {
+      socket.join(room);
+      socket.to(room).emit('welcomeMessage', `${user} joined ${room} room.`);
+    } else {
+      cb();
     }
   });
+
+  socket.on('message', ({ user, room, msg }, cb) => {
+    // connection.once('open', () => {
+    //   console.log('start stream');
+    //   const chatStream = connection.collection('chats').watch();
+    //   chatStream.on('change', (change) => {
+    //     switch (change.operationType) {
+    //       case 'insert':
+    //         let newChat = {
+    //           _id: change.fullDocument._id,
+    //           text: mg,
+    //           user: user,
+    //           rname: rname,
+    //         };
+    //         console.log(newChat);
+    //         return socket.to(room).emit('message', newChat);
+    //       default:
+    //         break;
+    //     }
+    //   });
+    // });
+    //for all the members
+    socket.in(room).emit('message', {
+      msg,
+      user,
+    });
+    //for the sender
+    // socket.emit('message', {
+    //   msg,
+    //   user,
+    // });
+  });
 });
+
+//realtime change of mongodb
+//using change stream and replica set
 
 //run server
 server.listen(PORT, () => {

@@ -63,10 +63,7 @@ export default function Home() {
             icon: 'success',
             title: res.data.message + '\nClick signin button to login.',
           });
-          setAction({
-            title: action.title === 'Signin' ? 'Signup' : 'Signin',
-            btitle: action.btitle === 'Signup' ? 'Signin' : 'Signup',
-          });
+          toggleForm();
         } else {
           Swal.fire({
             position: 'top-end',
@@ -131,7 +128,9 @@ export default function Home() {
             </form>
           </Box>
         </Grid>
-        <Divider />
+        <Divider orientation="vertical" flexItem>
+          Or-Join
+        </Divider>
         <Grid item xs={8} md={4} ml={5}>
           <Box textAlign={'center'}>
             <Button variant="contained" onClick={toggleForm}>
