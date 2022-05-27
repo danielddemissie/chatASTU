@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAllRooms, getAllRoomsOfUser, joinRooms, addRoom } from '../api';
-import { cancelAxios } from '../utils';
+import { cancelAxios } from '../utils/axios';
 import { useCallback } from 'react';
 
 export default function JoinRoom() {

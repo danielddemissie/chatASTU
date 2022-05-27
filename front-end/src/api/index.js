@@ -1,4 +1,4 @@
-import axiosClient from '../utils';
+import axiosClient from '../utils/axios';
 
 export function signinUser(user) {
   return axiosClient.post('/user/signin', { ...user });

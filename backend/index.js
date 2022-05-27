@@ -71,7 +71,7 @@ io.of('/api/socket').on('connection', (socket) => {
     //   });
     // });
     //for all the members
-    socket.to(room).emit('message', {
+    socket.in(room).emit('message', {
       msg,
       user,
     });

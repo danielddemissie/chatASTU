@@ -123,7 +123,7 @@ module.exports = {
       const { rname } = req.params;
       const allChats = await Chat.find({
         rname,
-      });
+      }).sort({ createdAt: 1 });
       return sendData(res, `all chats in ${rname}.`, allChats);
     } catch (error) {
       sendData(res, error.message, null);

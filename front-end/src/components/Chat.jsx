@@ -1,24 +1,32 @@
 import { Box } from '@mui/material/';
+import { nameCapitalize } from '../utils/axios';
 
-export default function Chat({ msg, username }) {
+export default function Chat({ msg, username, sender }) {
   return (
     <div>
       <Box
         sx={{
-          marginTop: 2,
-          marginLeft: 3,
+          marginTop: 5,
+          marginLeft: sender === username ? 3 : 20,
+          backgroundColor: '#f3f3f3',
+          padding: 3,
+          border: '1px solid #fff',
+          borderRadius: 5,
         }}
       >
         <span
           style={{
-            color: 'teal',
             fontSize: 20,
-            marginRight: 10,
+            marginRight: 5,
+            backgroundColor: 'teal',
+            borderRadius: '50%',
+            padding: 10,
+            color: '#fff',
           }}
         >
-          {username}
+          {nameCapitalize(username.charAt(0) + username.charAt(1))}
         </span>
-        <span>{msg}</span>
+        <p style={{ display: 'inline-block' }}>{msg}</p>
       </Box>
     </div>
   );
